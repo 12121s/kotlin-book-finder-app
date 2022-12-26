@@ -8,5 +8,4 @@ plugins {
 ext {
     coroutines = '1.6.4'
     lifecycleVersion = '2.5.1'
-    material3Version = '1.0.1'
 }
