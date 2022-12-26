@@ -15,7 +15,8 @@ class SearchViewModel(
     val booksResponse: MutableLiveData<Books?> = MutableLiveData()
 
     fun getBooks(content: String) = viewModelScope.launch(Dispatchers.IO) {
-            val response: Resource<Books> = searchUseCase(content)
-            booksResponse.postValue(response.data)
-        }
+        // TODO Loading state
+        val response: Resource<Books> = searchUseCase(content)
+        booksResponse.postValue(response.data)
+    }
 }
