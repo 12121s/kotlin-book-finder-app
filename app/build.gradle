@@ -10,6 +10,7 @@ android {
     defaultConfig {
         applicationId "com.illis.bookfinderapp"
         minSdk 26
+        //noinspection OldTargetApi
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -50,9 +51,6 @@ dependencies {
     // coroutine
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
-
-    // material
-    implementation "androidx.compose.material3:material3:$material3Version"
 
     // test
     testImplementation 'junit:junit:4.13.2'
