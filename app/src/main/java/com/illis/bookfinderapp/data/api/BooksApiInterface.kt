@@ -10,7 +10,7 @@ interface BooksApiInterface {
     @Headers("Accept: application/json", "Content-Type: application/json; charset=utf-8")
     @GET("/books/v1/volumes")
     suspend fun searchBooks(
-        @Query("q") inTitle: String,
+        @Query("q", encoded = true) inTitle: String,
         @Query("startIndex") startIndex: Int? = null,
         @Query("maxResults") maxResults: Int
     ): Response<Books>
