@@ -12,6 +12,7 @@ interface BooksApiInterface {
     suspend fun searchBooks(
         @Query("q", encoded = true) inTitle: String,
         @Query("startIndex") startIndex: Int? = null,
-        @Query("maxResults") maxResults: Int
+        @Query("maxResults") maxResults: Int,
+        @Query("orderBy") orderBy : String = "newest"
     ): Response<Books>
 }
