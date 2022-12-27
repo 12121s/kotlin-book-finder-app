@@ -14,40 +14,45 @@
         <ImageView
             android:id="@+id/book_thumbnail"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:minHeight="100dp"
-            android:scaleType="centerCrop"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
             />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="title"
-                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:autoSizeMaxTextSize="14sp"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeStepGranularity="1sp"
+                android:autoSizeTextType="uniform"
+                android:textAppearance="?attr/textAppearanceBody1"
                 />
             <TextView
                 android:id="@+id/author"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="author"
-                android:textAppearance="?attr/textAppearanceBody1"
+                android:textAppearance="?attr/textAppearanceCaption"
                 android:textColor="?android:attr/textColorPrimary"
                 />
             <TextView
                 android:id="@+id/published_date"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:text="published_date"
-                android:textAppearance="?attr/textAppearanceBody2"
+                android:textAppearance="?attr/textAppearanceCaption"
                 android:textColor="?android:attr/textColorSecondary"
                 />
 

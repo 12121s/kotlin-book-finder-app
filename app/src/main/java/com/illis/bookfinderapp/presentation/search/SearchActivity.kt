@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.*
 import com.illis.bookfinderapp.data.repository.BookRepositoryImpl
 import com.illis.bookfinderapp.databinding.ActivitySearchBinding
 import com.illis.bookfinderapp.domain.usecase.SearchUseCase
@@ -40,8 +41,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initSearchAdapter() {
-        val layoutManager = GridLayoutManager(baseContext, 2, RecyclerView.VERTICAL, false)
+        val layoutManager = FlexboxLayoutManager(baseContext).apply {
+            justifyContent = JustifyContent.SPACE_AROUND
+            flexDirection = FlexDirection.ROW
+            flexWrap = FlexWrap.WRAP
+        }
         binding.searchResult.layoutManager = layoutManager
+        binding.searchResult.setHasFixedSize(true)
         binding.searchResult.adapter = bookListAdapter
     }
 
@@ -51,11 +57,11 @@ class SearchActivity : AppCompatActivity() {
                 super.onScrolled(recyclerView, dx, dy)
 
                 val lastVisibleItemPosition =
-                    (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+                    (recyclerView.layoutManager as FlexboxLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = recyclerView.adapter!!.itemCount-1
 
                 // 스크롤이 끝에 도달했는지 확인
-                if (!binding.searchResult.canScrollVertically(1) && lastVisibleItemPosition == itemTotalCount) {
+                if (lastVisibleItemPosition == itemTotalCount) {
 //                    bookListAdapter.deleteLoading()
                     searchViewModel.getNextPageBooks()
                 }

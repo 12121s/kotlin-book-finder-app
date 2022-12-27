@@ -27,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:imeOptions="actionGo"
+                android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:paddingLeft="15dp" />
         </com.google.android.material.textfield.TextInputLayout>

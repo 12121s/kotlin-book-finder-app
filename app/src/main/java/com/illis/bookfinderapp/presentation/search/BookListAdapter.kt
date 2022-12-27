@@ -73,9 +73,10 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
             Glide.with(binding.bookThumbnail.context)
                 .load(books.imageLinks.thumbnail)
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .error(androidx.core.R.drawable.notification_icon_background)
-                .fallback(androidx.core.R.drawable.notification_template_icon_low_bg)
+                .placeholder(R.drawable.img_loading)
+                .error(R.drawable.img_loading)
+                .fallback(R.drawable.img_loading)
+                .fitCenter()
                 .into(binding.bookThumbnail)
 
             binding.root.setOnClickListener {
