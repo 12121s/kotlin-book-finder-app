@@ -1,6 +1,6 @@
 package com.illis.bookfinderapp.data.model
 
-data class Item(
+data class BookInfoList(
     val etag: String = "",
     val id: String = "",
     val kind: String = "",

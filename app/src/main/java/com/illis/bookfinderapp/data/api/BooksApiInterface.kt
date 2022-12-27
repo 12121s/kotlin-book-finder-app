@@ -11,6 +11,7 @@ interface BooksApiInterface {
     @GET("/books/v1/volumes")
     suspend fun searchBooks(
         @Query("q") inTitle: String,
-        @Query("maxResults") maxResults: String
+        @Query("startIndex") startIndex: Int? = null,
+        @Query("maxResults") maxResults: Int
     ): Response<Books>
 }

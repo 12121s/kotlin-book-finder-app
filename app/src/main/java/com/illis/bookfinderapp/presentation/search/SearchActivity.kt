@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.illis.bookfinderapp.data.repository.BookRepositoryImpl
 import com.illis.bookfinderapp.databinding.ActivitySearchBinding
@@ -33,11 +34,37 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initSearchLayout() {
+        initSearchAdapter()
+        initScrollListener()
+        initSearchBox()
+        initSearchAction()
+    }
 
+    private fun initSearchAdapter() {
         val layoutManager = GridLayoutManager(baseContext, 2, RecyclerView.VERTICAL, false)
         binding.searchResult.layoutManager = layoutManager
         binding.searchResult.adapter = bookListAdapter
+    }
 
+    private fun initScrollListener() {
+        binding.searchResult.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+                val itemTotalCount = recyclerView.adapter!!.itemCount-1
+
+                // 스크롤이 끝에 도달했는지 확인
+                if (!binding.searchResult.canScrollVertically(1) && lastVisibleItemPosition == itemTotalCount) {
+//                    bookListAdapter.deleteLoading()
+                    searchViewModel.getNextPageBooks()
+                }
+            }
+        })
+    }
+
+    private fun initSearchBox() {
         val imm = baseContext?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         binding.searchText.requestFocus()
         binding.searchText.postDelayed(Runnable {
@@ -46,7 +73,10 @@ class SearchActivity : AppCompatActivity() {
         binding.searchText.addTextChangedListener {
             binding.searchBtn.isEnabled = (it.toString().isNotEmpty())
         }
+    }
 
+    private fun initSearchAction() {
+        val imm = baseContext?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         binding.searchBtn.isEnabled = false
         binding.searchBtn.setOnClickListener {
             val searchText = binding.searchText.text.toString()
@@ -56,10 +86,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setBookList() {
-        searchViewModel.booksResponse.observe(this) { response ->
-            binding.searchResult.visibility = if (response?.items.isNullOrEmpty()) View.GONE else View.VISIBLE
-            binding.noSearchResult.visibility = if (response?.items.isNullOrEmpty()) View.VISIBLE else View.GONE
-            bookListAdapter.setList(response?.items?.map { it.volumeInfo }?.toMutableList())
+        searchViewModel.booksResponse.observe(this) { bookList ->
+            binding.searchResult.visibility = if (bookList.isNullOrEmpty()) View.GONE else View.VISIBLE
+            binding.noSearchResult.visibility = if (bookList.isNullOrEmpty()) View.VISIBLE else View.GONE
+            bookListAdapter.setList(bookList?.toMutableList())
         }
     }
 }
