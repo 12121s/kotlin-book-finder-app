@@ -27,7 +27,6 @@ class SearchActivity : AppCompatActivity() {
 
         val viewModelFactory = SearchViewModelFactory(SearchUseCase(BookRepositoryImpl()))
         searchViewModel = ViewModelProvider(this, viewModelFactory)[SearchViewModel::class.java]
-        searchViewModel.booksResponse.postValue(null) // init
 
         initSearchLayout()
         setBookList()
