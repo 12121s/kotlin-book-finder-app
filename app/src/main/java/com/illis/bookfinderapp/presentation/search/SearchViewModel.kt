@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchUseCase: SearchUseCase) : ViewModel() {
     val booksResponse = MutableLiveData<List<VolumeInfo>?>()
+    val volumeCount = MutableLiveData<Int>()
+
     private var searchText = ""
     private var page = 0 // 현재 페이지
     private var maxPage = 0 // 마지막 페이지
@@ -25,6 +27,8 @@ class SearchViewModel(private val searchUseCase: SearchUseCase) : ViewModel() {
         val response: Resource<Books> = searchUseCase(searchText, page)
         val bookList = response.data?.bookInfoLists?.map { it.volumeInfo }
         booksResponse.postValue(bookList)
+        volumeCount.postValue(response.data?.totalItems)
+
         maxPage = response.data?.totalItems?.div(ServerConsts.BOOKS_API_MAX_RESULTS) ?: 0
     }
 

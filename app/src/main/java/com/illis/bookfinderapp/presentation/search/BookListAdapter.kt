@@ -45,6 +45,8 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is BooksViewHolder){
             items[position]?.let { holder.bind(it) }
+        } else if (holder is LoadingViewHolder) {
+            holder.loading()
         }
     }
 
@@ -62,7 +64,6 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun deleteLoading(){
         items.removeAt(items.lastIndex)
-
     }
 
     inner class BooksViewHolder(private val binding: ItemBookGridBinding) : RecyclerView.ViewHolder(binding.root){
@@ -93,8 +94,9 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    inner class LoadingViewHolder(private val binding: ItemLoadingBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
+    inner class LoadingViewHolder(private val binding: ItemLoadingBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun loading() {
+            binding.loading.isIndeterminate = true
+        }
     }
 }

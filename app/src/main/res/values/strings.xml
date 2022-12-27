@@ -2,5 +2,6 @@
     <string name="app_name">BookFinderApp</string>
 
     <string name="empty_result">Please Search Books</string>
+    <string name="result_count">Results(%d)</string>
     <string name="search">Search</string>
 </resources>
