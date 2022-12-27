@@ -1,7 +1,10 @@
 package com.illis.bookfinderapp.presentation.search
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -10,6 +13,7 @@ import com.illis.bookfinderapp.data.model.VolumeInfo
 import com.illis.bookfinderapp.databinding.ItemBookGridBinding
 import com.illis.bookfinderapp.databinding.ItemLoadingBinding
 import com.illis.bookfinderapp.util.DataDiffUtil
+
 
 class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_ITEM = 0
@@ -45,6 +49,11 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is BooksViewHolder){
             items[position]?.let { holder.bind(it) }
+            holder.setOnItemClickListener {
+                val uri = Uri.parse(it.previewLink)
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                holder.itemView.context.startActivity(intent)
+            }
         } else if (holder is LoadingViewHolder) {
             holder.loading()
         }
