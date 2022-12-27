@@ -3,7 +3,9 @@ package com.illis.bookfinderapp.presentation.search
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -81,13 +83,23 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initSearchAction() {
-        val imm = baseContext?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         binding.searchBtn.isEnabled = false
         binding.searchBtn.setOnClickListener {
-            val searchText = binding.searchText.text.toString()
-            searchViewModel.getBooks(searchText)
-            imm?.hideSoftInputFromWindow(binding.searchText.windowToken, 0)
+            performSearch()
         }
+
+        binding.searchText.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH)
+                performSearch()
+            false
+        })
+    }
+
+    private fun performSearch() {
+        val imm = baseContext?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        val searchText = binding.searchText.text.toString()
+        searchViewModel.getBooks(searchText)
+        imm?.hideSoftInputFromWindow(binding.searchText.windowToken, 0)
     }
 
     private fun setBookList() {
