@@ -1,5 +1,6 @@
 package com.illis.bookfinderapp.presentation
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -58,7 +59,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initScrollListener() {
+        binding.searchResult.setOnTouchListener { _, _ ->
+            binding.searchResult.requestFocus()
+            showKeyboard(false)
+            false
+        }
         binding.searchResult.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
