@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchUseCase: SearchUseCase) : ViewModel() {
+    var firstOpen = true
     val booksResponse = MutableLiveData<List<VolumeInfo>?>()
     val selectedBook = MutableLiveData<VolumeInfo>()
     val volumeCount = MutableLiveData<Int>()

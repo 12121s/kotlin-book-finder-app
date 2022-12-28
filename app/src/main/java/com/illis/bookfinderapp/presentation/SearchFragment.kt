@@ -77,11 +77,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     }
 
     private fun initSearchBox() {
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        binding.searchText.requestFocus()
-        binding.searchText.postDelayed(Runnable {
-            imm?.showSoftInput(binding.searchText, InputMethodManager.SHOW_IMPLICIT)
-        }, 100)
+        if (searchViewModel.firstOpen) {
+            binding.searchText.requestFocus()
+            binding.searchText.postDelayed(Runnable {
+                showKeyboard(true)
+            }, 100)
+            searchViewModel.firstOpen = false
+        }
         binding.searchText.addTextChangedListener {
             binding.searchBtn.isEnabled = (it.toString().isNotEmpty())
         }
@@ -101,10 +103,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     }
 
     private fun performSearch() {
-        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         val searchText = binding.searchText.text.toString()
         searchViewModel.getBooks(searchText)
-        imm?.hideSoftInputFromWindow(binding.searchText.windowToken, 0)
+        showKeyboard(false)
+    }
+
+    private fun showKeyboard(show: Boolean) {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        if (show) imm?.showSoftInput(binding.searchText, InputMethodManager.SHOW_IMPLICIT)
+        else imm?.hideSoftInputFromWindow(binding.searchText.windowToken, 0)
     }
 
     private fun setBookList() {
