@@ -99,7 +99,9 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class LoadingViewHolder(private val binding: ItemLoadingBinding) : RecyclerView.ViewHolder(binding.root) {
         fun loading() {
-            binding.loading.isIndeterminate = true
+            binding.loading.post {
+                binding.loading.isIndeterminate = true
+            }
         }
     }
 }
