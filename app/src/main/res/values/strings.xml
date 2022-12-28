@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">BookFinderApp</string>
 
-    <string name="empty_result">Please Search Books</string>
+    <string name="empty_result">책을 검색해주세요</string>
+    <string name="search_hint">책 제목 입력</string>
     <string name="result_count">Results(%d)</string>
-    <string name="search">Search</string>
+    <string name="detail_no_description">No Description</string>
 </resources>
