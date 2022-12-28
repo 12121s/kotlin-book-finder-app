@@ -46,15 +46,17 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             flexWrap = FlexWrap.WRAP
         }
 
-        bookListAdapter.setOnItemClickListener {
-            searchViewModel.selectedBook.postValue(it)
-            findNavController().navigate(R.id.action_searchFragment_to_bookDetailFragment)
-        }
         binding.searchResult.apply {
             this.layoutManager = layoutManager
             this.setHasFixedSize(true)
             this.adapter = bookListAdapter
             this.edgeEffectFactory = BounceEdgeEffectFactory()
+        }
+
+        bookListAdapter.setOnItemClickListener { book ->
+            searchViewModel.selectedBook.postValue(book)
+            (activity as MainActivity).bookTitle.postValue(book.title)
+            findNavController().navigate(R.id.action_searchFragment_to_bookDetailFragment)
         }
     }
 
