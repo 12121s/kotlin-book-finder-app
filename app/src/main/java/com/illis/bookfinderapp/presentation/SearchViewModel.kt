@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel(private val searchUseCase: SearchUseCase) : ViewModel() {
     var firstOpen = true
     val booksResponse = MutableLiveData<List<VolumeInfo>?>()
+    val searchState = MutableLiveData<Resource<String>>()
     val selectedBook = MutableLiveData<VolumeInfo>()
     val volumeCount = MutableLiveData<Int>()
 
@@ -25,13 +26,25 @@ class SearchViewModel(private val searchUseCase: SearchUseCase) : ViewModel() {
         // 검색어, 페이지 초기화
         this@SearchViewModel.searchText = searchText
         page = 0
-        // TODO Loading state
-        val response: Resource<Books> = searchUseCase(searchText, page)
-        val bookList = response.data?.bookInfoLists?.map { it.volumeInfo }
-        booksResponse.postValue(bookList)
-        volumeCount.postValue(response.data?.totalItems)
+        searchState.postValue(Resource.Loading())
+        when(val response: Resource<Books> = searchUseCase(searchText, page)) {
+            is Resource.Success -> {
+                val bookList = response.data?.bookInfoLists?.map { it.volumeInfo }
+                if (!bookList.isNullOrEmpty()) {
+                    searchState.postValue(Resource.Success("success"))
+                    booksResponse.postValue(bookList)
+                    volumeCount.postValue(response.data?.totalItems)
 
-        maxPage = response.data?.totalItems?.div(ServerConsts.BOOKS_API_MAX_RESULTS) ?: 0
+                    maxPage = response.data?.totalItems?.div(ServerConsts.BOOKS_API_MAX_RESULTS) ?: 0
+                } else {
+                    searchState.postValue(Resource.Error("No Result"))
+                }
+            }
+            is Resource.Error -> {
+                searchState.postValue(Resource.Error(response.message?: "unknown error"))
+            }
+            else -> {}
+        }
     }
 
     fun getNextPageBooks() = viewModelScope.launch(Dispatchers.IO) {

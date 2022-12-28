@@ -8,7 +8,9 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -17,6 +19,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.illis.bookfinderapp.MainActivity
 import com.illis.bookfinderapp.R
+import com.illis.bookfinderapp.data.Resource
 import com.illis.bookfinderapp.databinding.FragmentSearchBinding
 import com.illis.bookfinderapp.util.BounceEdgeEffectFactory
 
@@ -30,6 +33,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
         initSearchLayout()
         setBookList()
+        observeSearchState()
     }
 
     private fun initSearchLayout() {
@@ -132,6 +136,25 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             binding.searchResultLayout.visibility = if (bookList.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.noSearchResult.visibility = if (bookList.isNullOrEmpty()) View.VISIBLE else View.GONE
             bookListAdapter.setList(bookList?.toMutableList())
+        }
+    }
+
+    private fun observeSearchState() {
+        searchViewModel.searchState.postValue(Resource.Success("")) // 초기화
+        searchViewModel.searchState.observe(viewLifecycleOwner) { state ->
+            when(state) {
+                is Resource.Loading -> {
+                    binding.searchLoading.isIndeterminate = true
+                    binding.searchLoading.visibility = View.VISIBLE
+                }
+                else -> {
+                    binding.searchLoading.isIndeterminate = false
+                    binding.searchLoading.visibility = View.GONE
+                    if (state is Resource.Error) {
+                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 }
