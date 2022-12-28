@@ -43,6 +43,10 @@ dependencies {
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
+    // navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$naviVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$naviVersion"
+
     // recyclerview layout manager
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
 

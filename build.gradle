@@ -6,6 +6,7 @@ plugins {
 }
 
 ext {
+    naviVersion = '2.5.3'
     coroutines = '1.6.4'
     lifecycleVersion = '2.5.1'
 }
