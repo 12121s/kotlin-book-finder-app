@@ -1,4 +1,4 @@
-package com.illis.bookfinderapp.presentation.search
+package com.illis.bookfinderapp.presentation
 
 import android.content.Intent
 import android.net.Uri
@@ -19,6 +19,7 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
     private val items = ArrayList<VolumeInfo?>()
+    private var onItemClickListener : ((VolumeInfo) -> Unit)? = null
 
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {
@@ -49,11 +50,6 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is BooksViewHolder){
             items[position]?.let { holder.bind(it) }
-            holder.setOnItemClickListener {
-                val uri = Uri.parse(it.previewLink)
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                holder.itemView.context.startActivity(intent)
-            }
         } else if (holder is LoadingViewHolder) {
             holder.loading()
         }
@@ -75,6 +71,10 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         items.removeAt(items.lastIndex)
     }
 
+    fun setOnItemClickListener(listener : (VolumeInfo) -> Unit){
+        onItemClickListener = listener
+    }
+
     inner class BooksViewHolder(private val binding: ItemBookGridBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(books: VolumeInfo){
             binding.title.text = books.title
@@ -94,12 +94,6 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     it(books)
                 }
             }
-        }
-
-        private var onItemClickListener : ((VolumeInfo) -> Unit)? = null
-
-        fun setOnItemClickListener(listener : (VolumeInfo) -> Unit){
-            onItemClickListener = listener
         }
     }
 

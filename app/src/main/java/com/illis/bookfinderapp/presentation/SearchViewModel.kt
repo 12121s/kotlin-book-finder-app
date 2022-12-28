@@ -1,4 +1,4 @@
-package com.illis.bookfinderapp.presentation.search
+package com.illis.bookfinderapp.presentation
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchUseCase: SearchUseCase) : ViewModel() {
     val booksResponse = MutableLiveData<List<VolumeInfo>?>()
+    val selectedBook = MutableLiveData<VolumeInfo>()
     val volumeCount = MutableLiveData<Int>()
 
     private var searchText = ""

@@ -1,4 +1,4 @@
-package com.illis.bookfinderapp.presentation.search
+package com.illis.bookfinderapp.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
