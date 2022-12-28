@@ -1,6 +1,7 @@
 package com.illis.bookfinderapp.data.api
 
 import com.illis.bookfinderapp.consts.ServerConsts.Companion.BASE_URL
+import com.illis.bookfinderapp.data.interceptor.ErrorInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,6 +18,7 @@ object RetrofitInstance {
     private val client by lazy {
         OkHttpClient.Builder()
             .addInterceptor(interceptor)
+            .addInterceptor(ErrorInterceptor())
             .connectTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
     }
