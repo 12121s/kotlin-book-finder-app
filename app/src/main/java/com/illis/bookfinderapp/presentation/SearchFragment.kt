@@ -2,9 +2,8 @@ package com.illis.bookfinderapp.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -75,7 +74,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                 val itemTotalCount = recyclerView.adapter!!.itemCount - 1
 
                 // 스크롤이 끝에 도달했는지 확인
-                if (lastVisibleItemPosition == itemTotalCount) {
+                Log.d("BookFinderApp", "last: $lastVisibleItemPosition, total: $itemTotalCount && canScrollVertically ${binding.searchResult.canScrollVertically(1)}")
+                if ((!binding.searchResult.canScrollVertically(1) && lastVisibleItemPosition == itemTotalCount - 1) ||
+                    binding.searchResult.canScrollVertically(1) && lastVisibleItemPosition == itemTotalCount) {
                     bookListAdapter.deleteLoading()
                     searchViewModel.getNextPageBooks()
                 }
