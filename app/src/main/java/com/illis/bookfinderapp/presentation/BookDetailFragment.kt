@@ -25,7 +25,7 @@ class BookDetailFragment : BaseFragment<FragmentBookDetailBinding>(FragmentBookD
                 bookDetailTitle.text = book.title
                 bookDetailAuthor.text = book.authors?.get(0)
                 bookDetailPublishedDate.text = book.publishedDate
-                bookDetailDescription.text = book.description
+                bookDetailDescription.text = book.description?: getString(R.string.detail_no_description)
                 Glide.with(bookDetailThumbnail.context)
                     .load(book.imageLinks.thumbnail)
                     .placeholder(R.drawable.img_loading)
