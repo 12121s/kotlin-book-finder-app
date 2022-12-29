@@ -33,17 +33,21 @@ class SearchViewModel(private val searchUseCase: SearchUseCase) : ViewModel() {
                 if (!bookList.isNullOrEmpty()) {
                     searchState.postValue(Resource.Success("success"))
                     booksResponse.postValue(bookList)
-                    volumeCount.postValue(response.data?.totalItems)
+                    volumeCount.postValue(response.data.totalItems)
 
-                    maxPage = response.data?.totalItems?.div(ServerConsts.BOOKS_API_MAX_RESULTS) ?: 0
+                    maxPage = response.data.totalItems.div(ServerConsts.BOOKS_API_MAX_RESULTS)
                 } else {
                     searchState.postValue(Resource.Error("No Result"))
+
+                    maxPage = 0
                 }
             }
             is Resource.Error -> {
                 searchState.postValue(Resource.Error(response.message?: "unknown error"))
             }
-            else -> {}
+            else -> {
+                searchState.postValue(Resource.Success(""))
+            }
         }
     }
 

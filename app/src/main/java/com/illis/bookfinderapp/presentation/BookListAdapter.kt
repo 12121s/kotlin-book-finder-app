@@ -1,10 +1,8 @@
 package com.illis.bookfinderapp.presentation
 
-import android.content.Intent
-import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -18,8 +16,9 @@ import com.illis.bookfinderapp.util.DataDiffUtil
 class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
-    private val items = ArrayList<VolumeInfo?>()
+    private var items = ArrayList<VolumeInfo?>()
     private var onItemClickListener : ((VolumeInfo) -> Unit)? = null
+    var loadComplete = false
 
     override fun getItemViewType(position: Int): Int {
         return when (items[position]) {
@@ -55,20 +54,27 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    fun setList(books: MutableList<VolumeInfo>?) {
-        val diffCallback: DataDiffUtil<VolumeInfo> = DataDiffUtil(items, books)
+    fun setList(newBookList: MutableList<VolumeInfo?>?) {
+        loadComplete = true
+
+        newBookList?.add(null) // progressbar
+        val diffCallback: DataDiffUtil<VolumeInfo> = DataDiffUtil(items, newBookList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
-        if (books != null) {
-            items.clear()
-            items.addAll(books)
+        if (newBookList != null) {
+            items = ArrayList()
+            items.addAll(newBookList)
         }
-        items.add(null) // progress bar
+
         diffResult.dispatchUpdatesTo(this)
     }
 
     fun deleteLoading(){
-        items.removeAt(items.lastIndex)
+        Log.d("BookFinder", "deleteLoading ${items.lastIndex}")
+        val lastItemIndex = items.lastIndex
+        items.removeAt(lastItemIndex)
+
+        notifyItemRemoved(lastItemIndex)
     }
 
     fun setOnItemClickListener(listener : (VolumeInfo) -> Unit){

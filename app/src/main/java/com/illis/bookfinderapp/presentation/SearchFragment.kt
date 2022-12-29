@@ -3,14 +3,12 @@ package com.illis.bookfinderapp.presentation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -19,6 +17,7 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.illis.bookfinderapp.MainActivity
 import com.illis.bookfinderapp.R
+import com.illis.bookfinderapp.consts.ServerConsts
 import com.illis.bookfinderapp.data.Resource
 import com.illis.bookfinderapp.databinding.FragmentSearchBinding
 import com.illis.bookfinderapp.util.BounceEdgeEffectFactory
@@ -75,16 +74,15 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastVisibleItemPosition =
-                    (recyclerView.layoutManager as FlexboxLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+                val lastVisibleItemPosition = (recyclerView.layoutManager as FlexboxLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
                 val itemTotalCount = recyclerView.adapter!!.itemCount - 1
 
-                // 스크롤이 끝에 도달했는지 확인
-                Log.d("BookFinderApp", "last: $lastVisibleItemPosition, total: $itemTotalCount && canScrollVertically ${binding.searchResult.canScrollVertically(1)}")
-                if ((!binding.searchResult.canScrollVertically(1) && lastVisibleItemPosition == itemTotalCount - 1) ||
-                    binding.searchResult.canScrollVertically(1) && lastVisibleItemPosition == itemTotalCount) {
-                    bookListAdapter.deleteLoading()
-                    searchViewModel.getNextPageBooks()
+                // 스크롤이 끝에 도달했는지 확인 (2열이므로 마지막 아이템 2개 모두 체크)
+                if (lastVisibleItemPosition == itemTotalCount || lastVisibleItemPosition == itemTotalCount - 1) {
+                    if (bookListAdapter.loadComplete) { // 서버 request 중복 호출 방지
+                        bookListAdapter.loadComplete = false
+                        searchViewModel.getNextPageBooks()
+                    }
                 }
             }
         })
@@ -130,6 +128,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
     private fun setBookList() {
         searchViewModel.volumeCount.observe(viewLifecycleOwner) { count ->
+            // 아이템 개수가 1 페이지 개수보다 적으면 로딩 애니메이션 미리 제거
+            if (count < ServerConsts.BOOKS_API_MAX_RESULTS) {
+                binding.searchResult.post {
+                    bookListAdapter.deleteLoading()
+                }
+            }
             binding.volumeCount.text = String.format(getString(R.string.result_count), count)
         }
         searchViewModel.booksResponse.observe(viewLifecycleOwner) { bookList ->
