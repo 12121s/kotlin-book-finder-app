@@ -128,17 +128,22 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
     private fun setBookList() {
         searchViewModel.volumeCount.observe(viewLifecycleOwner) { count ->
-            // 아이템 개수가 1 페이지 개수보다 적으면 로딩 애니메이션 미리 제거
-            if (count < ServerConsts.BOOKS_API_MAX_RESULTS) {
-                binding.searchResult.post {
+            binding.searchResult.post {
+                // 아이템 개수가 1 페이지 개수보다 적으면 로딩 애니메이션 미리 제거
+                if (count < ServerConsts.BOOKS_API_MAX_RESULTS) {
                     bookListAdapter.deleteLoading()
                 }
+                // 리사이클러뷰 스크롤 초기화
+                binding.searchResult.postDelayed(Runnable {
+                    binding.searchResult.scrollToPosition(0)
+                }, 100)
             }
             binding.volumeCount.text = String.format(getString(R.string.result_count), count)
         }
         searchViewModel.booksResponse.observe(viewLifecycleOwner) { bookList ->
             binding.searchResultLayout.visibility = if (bookList.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.noSearchResult.visibility = if (bookList.isNullOrEmpty()) View.VISIBLE else View.GONE
+
             bookListAdapter.setList(bookList?.toMutableList())
         }
     }
