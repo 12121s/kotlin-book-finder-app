@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -24,11 +25,10 @@ import com.illis.bookfinderapp.util.BounceEdgeEffectFactory
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate) {
     private val bookListAdapter = BookListAdapter()
-    private lateinit var searchViewModel: SearchViewModel
+    private val searchViewModel: SearchViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchViewModel = (activity as MainActivity).searchViewModel
 
         initSearchLayout()
         setBookList()

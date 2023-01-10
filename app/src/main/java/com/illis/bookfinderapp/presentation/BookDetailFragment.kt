@@ -4,17 +4,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
-import com.illis.bookfinderapp.MainActivity
 import com.illis.bookfinderapp.R
 import com.illis.bookfinderapp.databinding.FragmentBookDetailBinding
 
 class BookDetailFragment : BaseFragment<FragmentBookDetailBinding>(FragmentBookDetailBinding::inflate) {
-    private lateinit var searchViewModel: SearchViewModel
+    private val searchViewModel: SearchViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchViewModel = (activity as MainActivity).searchViewModel
 
         setBookDetail()
     }
