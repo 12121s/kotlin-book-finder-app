@@ -3,6 +3,7 @@ package com.illis.bookfinderapp.presentation
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -10,18 +11,19 @@ import com.illis.bookfinderapp.R
 import com.illis.bookfinderapp.data.model.VolumeInfo
 import com.illis.bookfinderapp.databinding.ItemBookGridBinding
 import com.illis.bookfinderapp.databinding.ItemLoadingBinding
-import com.illis.bookfinderapp.util.DataDiffUtil
 
 
 class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
-    private var items = ArrayList<VolumeInfo?>()
+
+    private val asyncDiffer = AsyncListDiffer(this, DiffUtilCallback())
+
     private var onItemClickListener : ((VolumeInfo) -> Unit)? = null
     var loadComplete = false
 
     override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
+        return when (asyncDiffer.currentList[position]) {
             null -> VIEW_TYPE_LOADING
             else -> VIEW_TYPE_ITEM
         }
@@ -43,12 +45,12 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return asyncDiffer.currentList.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is BooksViewHolder){
-            items[position]?.let { holder.bind(it) }
+            asyncDiffer.currentList[position]?.let { holder.bind(it) }
         } else if (holder is LoadingViewHolder) {
             holder.loading()
         }
@@ -58,21 +60,13 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         loadComplete = true
 
         newBookList?.add(null) // progressbar
-        val diffCallback: DataDiffUtil<VolumeInfo> = DataDiffUtil(items, newBookList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
-        if (newBookList != null) {
-            items = ArrayList()
-            items.addAll(newBookList)
-        }
-
-        diffResult.dispatchUpdatesTo(this)
+        asyncDiffer.submitList(newBookList)
     }
 
     fun deleteLoading(){
-        Log.d("BookFinder", "deleteLoading ${items.lastIndex}")
-        val lastItemIndex = items.lastIndex
-        items.removeAt(lastItemIndex)
+        Log.d("BookFinder", "deleteLoading ${asyncDiffer.currentList.lastIndex}")
+        val lastItemIndex = asyncDiffer.currentList.lastIndex
+        asyncDiffer.currentList.removeAt(lastItemIndex)
 
         notifyItemRemoved(lastItemIndex)
     }
@@ -108,6 +102,18 @@ class BookListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.loading.post {
                 binding.loading.isIndeterminate = true
             }
+        }
+    }
+
+    inner class DiffUtilCallback(): DiffUtil.ItemCallback<VolumeInfo>(){
+
+        override fun areItemsTheSame(oldItem: VolumeInfo, newItem: VolumeInfo): Boolean {
+            return oldItem.title == newItem.title
+        }
+
+        // false : 전체 갱신, true : 전체 미갱신
+        override fun areContentsTheSame(oldItem: VolumeInfo, newItem: VolumeInfo): Boolean {
+            return oldItem == newItem
         }
     }
 }
